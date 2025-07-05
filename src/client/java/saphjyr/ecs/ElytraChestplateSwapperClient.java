@@ -1,10 +1,19 @@
 package saphjyr.ecs;
 
+import org.lwjgl.glfw.GLFW;
+
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 
 public class ElytraChestplateSwapperClient implements ClientModInitializer {
-	@Override
-	public void onInitializeClient() {
-		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
-	}
+    
+    public static SwapKeyBinding keyBinding;
+    
+    @Override
+    public void onInitializeClient() {
+
+        // Create and log the key binding
+        keyBinding = new SwapKeyBinding("key.ecs.swap", GLFW.GLFW_KEY_GRAVE_ACCENT, "category.ecs");
+        KeyBindingHelper.registerKeyBinding(keyBinding);
+    }
 }

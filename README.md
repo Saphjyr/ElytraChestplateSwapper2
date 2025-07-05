@@ -30,3 +30,8 @@ Refer to the [documentation](https://docs.fabricmc.net/) for more information on
 - IntelliJ IDEA: [Use the documentation](https://docs.fabricmc.net/develop/getting-started/launching-the-game)
 - VSCode: Use the `Minecraft Client` task in the `Run and Debug` sidebar
 - Command Line: Use `./gradlew runClient` to start the game with the mod loaded
+
+
+### Building
+
+- Command Line: Use `./gradlew remapJar` to build the mod jar file. The output will be in `build/libs/` directory.
