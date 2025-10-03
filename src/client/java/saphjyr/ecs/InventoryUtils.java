@@ -104,7 +104,7 @@ public class InventoryUtils {
             return false; // Check if the item is in the chest slot
         }
 
-        if (!stack.getItem().getDefaultStack().getName().getString().toLowerCase().contains("chestplate")) {
+        if (!stack.getItem().toString().toLowerCase().contains("chestplate")) {
             return false; // Not a chestplate by name
         }
         return true;

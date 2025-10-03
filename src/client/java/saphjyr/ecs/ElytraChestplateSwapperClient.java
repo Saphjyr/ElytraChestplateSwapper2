@@ -1,5 +1,8 @@
 package saphjyr.ecs;
 
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.util.Identifier;
+
 import org.lwjgl.glfw.GLFW;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -13,7 +16,8 @@ public class ElytraChestplateSwapperClient implements ClientModInitializer {
     public void onInitializeClient() {
 
         // Create and log the key binding
-        keyBinding = new SwapKeyBinding("key.ecs.swap", GLFW.GLFW_KEY_GRAVE_ACCENT, "category.ecs");
+        KeyBinding.Category ecsCategory = KeyBinding.Category.create(Identifier.of("ecs", "swap"));
+        keyBinding = new SwapKeyBinding("key.ecs.swap", GLFW.GLFW_KEY_GRAVE_ACCENT, ecsCategory);
         KeyBindingHelper.registerKeyBinding(keyBinding);
     }
 }

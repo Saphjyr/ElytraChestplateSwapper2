@@ -8,13 +8,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.At;
 
 import net.minecraft.client.Keyboard;
+import net.minecraft.client.input.KeyInput;
 
 @Mixin(Keyboard.class)
 public class KeyboardMixin {
     
     @Inject(method = "onKey", at = @At(value = "HEAD"))
-	private void onKey(long window, int key, int scancode, int i, int j, CallbackInfo callbackInfo) {
-        if (ElytraChestplateSwapperClient.keyBinding.getKey().getCode() == key) {
+	private void onKey(long window, int key, KeyInput keyInput, CallbackInfo callbackInfo) {
+        if (ElytraChestplateSwapperClient.keyBinding.getKey().getCode() == keyInput.getKeycode()) {
             
             // Update the pressedBypass state of the SwapKeyBinding
             boolean pressed = ElytraChestplateSwapperClient.keyBinding.isPressedBypass();
