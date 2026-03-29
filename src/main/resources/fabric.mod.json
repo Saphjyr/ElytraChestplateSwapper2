@@ -3,9 +3,9 @@
 	"id": "elytra-chestplate-swapper",
 	"version": "${version}",
 	"name": "Elytra Chestplate Swapper",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "A simple quality of life mod that swaps between chestplate and elytra on a keystroke.",
 	"authors": [
-		"Me!"
+		"Saphjyr"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",

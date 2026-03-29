@@ -1,35 +1,34 @@
 package saphjyr.ecs;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.inventory.ClickType;
 import net.fabricmc.api.Environment;
 
 public class InventoryUtils {
 
     @Environment(net.fabricmc.api.EnvType.CLIENT)
-    public static void swapChestplate(MinecraftClient client){
+    public static void swapChestplate(Minecraft client){
 
         // Check if client.player is not null
         if (client.player == null) return;
 
         // Check if it is a player
-        if (!(client.player instanceof ClientPlayerEntity)) return;
+        if (!(client.player instanceof LocalPlayer)) return;
 
         // Check if is it not dead
-        if (client.player.isDead()) return;
+        if (client.player.isDeadOrDying()) return;
 
         // Slots to swap to
         int elytraSlot = -1;
         int chestplateSlot = -1;
 
-        int HOTBAR_SIZE = PlayerInventory.getHotbarSize(); // 9
-        int MAIN_SIZE = PlayerInventory.MAIN_SIZE; // 36
+        int HOTBAR_SIZE = Inventory.getSelectionSize(); // 9
+        int MAIN_SIZE = Inventory.INVENTORY_SIZE; // 36
         int TOTAL_SIZE = MAIN_SIZE + 1; // 37
 
         // List inventory slots, in a special order so the selected slot is the most top-left chestplate : 9 - 35 40 0 - 8
@@ -41,7 +40,7 @@ public class InventoryUtils {
         }
 
         // Off hand
-        range[MAIN_SIZE - HOTBAR_SIZE] = PlayerInventory.OFF_HAND_SLOT; // 40
+        range[MAIN_SIZE - HOTBAR_SIZE] = Inventory.SLOT_OFFHAND; // 40
 
         // Hotbar
         for (int i = 0; i < HOTBAR_SIZE; i++) {
@@ -52,7 +51,7 @@ public class InventoryUtils {
         for(int slot : range) {
 
             // Get the itemstack in the slot
-            ItemStack stack = client.player.getInventory().getStack(slot);
+            ItemStack stack = client.player.getInventory().getItem(slot);
 
             // Check if the itemstack is empty
             if (stack.isEmpty()) {
@@ -75,7 +74,7 @@ public class InventoryUtils {
         }
 
         // Get the itemstack in the chestplate slot
-        ItemStack wearedItemStack =  client.player.getInventory().getStack(38);
+        ItemStack wearedItemStack =  client.player.getInventory().getItem(38);
         if (wearedItemStack.isEmpty() && elytraSlot >= 0) {
             sendSwapPackets(elytraSlot, client);
         }
@@ -92,7 +91,7 @@ public class InventoryUtils {
     }
 
     private static boolean isChestplate(ItemStack stack) {
-        if (stack.getItem().getComponents().contains(DataComponentTypes.EQUIPPABLE) == false) {
+        if (!stack.has(net.minecraft.core.component.DataComponents.EQUIPPABLE)) {
             return false;
         }
 
@@ -100,7 +99,8 @@ public class InventoryUtils {
             return false; // Elytra is not a chestplate
         }
 
-        if (stack.getItem().getComponents().get(DataComponentTypes.EQUIPPABLE).slot() != EquipmentSlot.CHEST) {
+        var equippable = stack.get(net.minecraft.core.component.DataComponents.EQUIPPABLE);
+        if (equippable == null || equippable.slot() != EquipmentSlot.CHEST) {
             return false; // Check if the item is in the chest slot
         }
 
@@ -110,20 +110,22 @@ public class InventoryUtils {
         return true;
     }
 
-    private static void sendSwapPackets(int slot, MinecraftClient client) {
+    private static void sendSwapPackets(int slot, Minecraft client) {
         int sentSlot = slot;
-        if (sentSlot == PlayerInventory.OFF_HAND_SLOT) sentSlot += 5; // Off Hand offset
-        if(sentSlot < PlayerInventory.getHotbarSize()) sentSlot += PlayerInventory.MAIN_SIZE;   // Toolbar offset
-        
+        if (sentSlot == 40) sentSlot += 5; // Off Hand offset
+        if(sentSlot < Inventory.getSelectionSize()) sentSlot += 36;   // Toolbar offset
 
-        // Take the item to swap to
-        client.interactionManager.clickSlot(0, sentSlot, 0, SlotActionType.PICKUP, client.player);
+        if (client.gameMode != null) {
 
-        // Put it in the armor slot
-        client.interactionManager.clickSlot(0, 6, 0, SlotActionType.PICKUP, client.player);
+            // Take the item to swap to
+            client.gameMode.handleInventoryMouseClick(0, sentSlot, 0, ClickType.PICKUP, client.player);
 
-        // Put back what was in the armor slot (can be air)
-        client.interactionManager.clickSlot(0, sentSlot, 0, SlotActionType.PICKUP, client.player);
+            // Put it in the armor slot
+            client.gameMode.handleInventoryMouseClick(0, 6, 0, ClickType.PICKUP, client.player);
+
+            // Put back what was in the armor slot (can be air)
+            client.gameMode.handleInventoryMouseClick(0, sentSlot, 0, ClickType.PICKUP, client.player);
+        }
     }
 
 

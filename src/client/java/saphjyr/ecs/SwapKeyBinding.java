@@ -1,51 +1,37 @@
 package saphjyr.ecs;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.InputUtil.Key;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.KeyMapping;
+import com.mojang.blaze3d.platform.InputConstants.Key;
 
 /**
  * SwapKeyBinding
  */
-public class SwapKeyBinding extends KeyBinding {
-
-    private Key key;
+public class SwapKeyBinding extends KeyMapping {
 
     private boolean pressedBypass;
 
-    public SwapKeyBinding(String translationKey, int defaultkey, Category category) {
-        super(
-            translationKey, // The translation key of the keybinding's name
-            InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-            defaultkey, // The keycode of the key
-            category // The translation key of the keybinding's category.
-        );
-        key = this.getDefaultKey();
+    public SwapKeyBinding(String name, int keyCode, KeyMapping.Category category) {
+        super(name, keyCode, category);
         pressedBypass = false;
     }
 
-
-    @Override
-    public void setBoundKey(Key boundKey) {
-        key = boundKey;
-        super.setBoundKey(boundKey);
-    }
-
     public Key getKey() {
-        return key;
+        return this.key;
     }
 
     @Override
-	public void setPressed(boolean pressed) {
-		super.setPressed(pressed);
-		if(pressed) onPressed();
-	}
+    public void setDown(boolean pressed) {
+        super.setDown(pressed);
+        if (pressed) {
+            onPressed();
+        }
+    }
 
     public void onPressed() {
-        InventoryUtils.swapChestplate(MinecraftClient.getInstance());
+        InventoryUtils.swapChestplate(Minecraft.getInstance());
     }
 
     public boolean isPressedBypass() {
@@ -60,17 +46,17 @@ public class SwapKeyBinding extends KeyBinding {
     public void onPressBypass() {
 
         try {
-            MinecraftClient client = MinecraftClient.getInstance();
+            Minecraft client = Minecraft.getInstance();
         
             // If the the inventory screen, trigger swap
-            if (client.currentScreen instanceof InventoryScreen) {
+            if (client.screen instanceof InventoryScreen) {
                 InventoryUtils.swapChestplate(client);
             }
 
             //If in the creative screen, only trigger when in the inventory tab
-            if (client.currentScreen instanceof CreativeInventoryScreen) {
-                CreativeInventoryScreen cis = (CreativeInventoryScreen)client.currentScreen;
-                if(cis.isInventoryTabSelected()) {
+            if (client.screen instanceof CreativeModeInventoryScreen) {
+                CreativeModeInventoryScreen cis = (CreativeModeInventoryScreen)client.screen;
+                if(cis.isInventoryOpen()) {
                     InventoryUtils.swapChestplate(client);
                 }
             }
