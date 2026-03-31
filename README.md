@@ -43,4 +43,4 @@ Refer to the [documentation](https://docs.fabricmc.net/) for more information on
 
 ### Building
 
-- Command Line: Use `./gradlew remapJar` to build the mod jar file. The output will be in `build/libs/` directory.
+- Command Line: Use `./gradlew build` to build the mod's jar file. The output will be in the `build/libs/` directory.
