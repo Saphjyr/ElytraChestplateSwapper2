@@ -6,7 +6,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.fabricmc.api.Environment;
 
 public class InventoryUtils {
@@ -118,13 +118,13 @@ public class InventoryUtils {
         if (client.gameMode != null) {
 
             // Take the item to swap to
-            client.gameMode.handleInventoryMouseClick(0, sentSlot, 0, ClickType.PICKUP, client.player);
+            client.gameMode.handleContainerInput(0, sentSlot, 0, ContainerInput.PICKUP, client.player);
 
             // Put it in the armor slot
-            client.gameMode.handleInventoryMouseClick(0, 6, 0, ClickType.PICKUP, client.player);
+            client.gameMode.handleContainerInput(0, 6, 0, ContainerInput.PICKUP, client.player);
 
             // Put back what was in the armor slot (can be air)
-            client.gameMode.handleInventoryMouseClick(0, sentSlot, 0, ClickType.PICKUP, client.player);
+            client.gameMode.handleContainerInput(0, sentSlot, 0, ContainerInput.PICKUP, client.player);
         }
     }
 
